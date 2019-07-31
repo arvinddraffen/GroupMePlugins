@@ -44,11 +44,14 @@ namespace LetterSwapPlugin
 
             var json = proc.StandardOutput.ReadLine();
             Debug.WriteLine(json);
-            var effects = JObject.Parse(json);
-            foreach (System.Collections.Generic.KeyValuePair<string, JToken> effect in effects)
+            if (!string.IsNullOrEmpty(json))
             {
-                Debug.WriteLine(effect);
-                result.TextOptions.Add((string)effect.Value);
+                var effects = JObject.Parse(json);
+                foreach (System.Collections.Generic.KeyValuePair<string, JToken> effect in effects)
+                {
+                    Debug.WriteLine(effect);
+                    result.TextOptions.Add((string)effect.Value);
+                }
             }
         }
     }

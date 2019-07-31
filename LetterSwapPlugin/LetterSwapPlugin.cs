@@ -8,21 +8,24 @@ using Newtonsoft.Json.Linq;
 
 namespace LetterSwapPlugin
 {
-    public class LetterSwapPlugin : GroupMeClientPlugin.IPluginBase, IMessageComposePlugin
+    public class LetterSwapPlugin : GroupMeClientPlugin.PluginBase, IMessageComposePlugin
     {
         public string EffectPluginName => "Letter Swap";
+
+        public override string PluginDisplayName => "Letter Swap Plugin";
+
+        public override string PluginVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public async Task<MessageSuggestions> ProvideOptions(string typedMessage)
         {
             var result = new MessageSuggestions();
 
-            //result.TextOptions.Add(this.DoLetterSwap(typedMessage, result));
-            await DoLetterSwap(typedMessage, result);
+            await Task.Run(() => DoLetterSwap(typedMessage, result));
 
-            return await Task.FromResult<MessageSuggestions>(result);
+            return result;
         }
 
-        private async Task DoLetterSwap(string text, MessageSuggestions result)
+        private void DoLetterSwap(string text, MessageSuggestions result)
         {
             var proc = new Process
             {
@@ -40,11 +43,14 @@ namespace LetterSwapPlugin
 
             var json = proc.StandardOutput.ReadLine();
             Debug.WriteLine(json);
-            var effects = JObject.Parse(json);
-            foreach (System.Collections.Generic.KeyValuePair<string, JToken> effect in effects)
+            if (!string.IsNullOrEmpty(json))
             {
-                Debug.WriteLine(effect);
-                result.TextOptions.Add((string)effect.Value);
+                var effects = JObject.Parse(json);
+                foreach (System.Collections.Generic.KeyValuePair<string, JToken> effect in effects)
+                {
+                    Debug.WriteLine(effect);
+                    result.TextOptions.Add((string)effect.Value);
+                }
             }
         }
     }

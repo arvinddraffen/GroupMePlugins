@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GroupMeClientPlugin" Version="1.0.1" />
+  </ItemGroup>
+
+  <Target Name="TestTarget" AfterTargets="Build">
+    <Message Text="Building Python Tool"/>
+    <Exec Command="py -m PyInstaller -F &quot;$(MSBuildProjectDirectory)\PhraseManipulation-plugin.py&quot; --distpath &quot;$(MSBuildProjectDirectory)\$(OutDir)\&quot;"
+          WorkingDirectory="$(IntermediateOutputPath)"/>
+  </Target>
+</Project>

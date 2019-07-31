@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using GroupMeClientPlugin.MessageCompose;
+using Newtonsoft.Json.Linq;
 
 namespace LetterSwapPlugin
 {
@@ -14,12 +15,14 @@ namespace LetterSwapPlugin
         public async Task<MessageSuggestions> ProvideOptions(string typedMessage)
         {
             var result = new MessageSuggestions();
-            result.TextOptions.Add(this.DoLetterSwap(typedMessage));
+
+            //result.TextOptions.Add(this.DoLetterSwap(typedMessage, result));
+            await DoLetterSwap(typedMessage, result);
 
             return await Task.FromResult<MessageSuggestions>(result);
         }
 
-        private string DoLetterSwap(string text)
+        private async Task DoLetterSwap(string text, MessageSuggestions result)
         {
             var proc = new Process
             {
@@ -34,15 +37,15 @@ namespace LetterSwapPlugin
             };
 
             proc.Start();
-            return proc.StandardOutput.ReadLine();
-        }
 
-        private static Task ExitedAsync(Process p)
-        {
-            var tcs = new TaskCompletionSource<object>();
-            p.Exited += (s,e) => tcs.TrySetResult(null);
-            if (p.HasExited) tcs.TrySetResult(null);
-            return tcs.Task;
+            var json = proc.StandardOutput.ReadLine();
+            Debug.WriteLine(json);
+            var effects = JObject.Parse(json);
+            foreach (System.Collections.Generic.KeyValuePair<string, JToken> effect in effects)
+            {
+                Debug.WriteLine(effect);
+                result.TextOptions.Add((string)effect.Value);
+            }
         }
     }
 }

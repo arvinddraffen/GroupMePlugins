@@ -20,7 +20,6 @@ namespace LetterSwapPlugin
         {
             var result = new MessageSuggestions();
 
-            //result.TextOptions.Add(this.DoLetterSwap(typedMessage, result));
             await Task.Run(() => DoLetterSwap(typedMessage, result));
 
             return result;

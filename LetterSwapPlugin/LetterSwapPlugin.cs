@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GroupMeClientPlugin.MessageCompose;
 
-namespace EffectDemo
+namespace LetterSwapPlugin
 {
     public class LetterSwapPlugin : GroupMeClientPlugin.PluginBase, IMessageComposePlugin
     {
@@ -21,7 +21,6 @@ namespace EffectDemo
         public Task<MessageSuggestions> ProvideOptions(string typedMessage)
         {
             var results = new MessageSuggestions();
-            //results.TextOptions.Add("DEMO: " + typedMessage.ToUpper());
             results.TextOptions.Add(this.DoLetterSwap(typedMessage));
             results.TextOptions.Add(this.DoLetterSwapReverse(typedMessage));
             results.TextOptions.Add(this.DoGSSwap(typedMessage));

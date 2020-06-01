@@ -1,0 +1,80 @@
+﻿<Window x:Class="GroupPluginDemoWPF_MVVM.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GroupPluginDemoWPF_MVVM" xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+        FontSize="14"
+        FontFamily="Segoe UI"
+        Title="MainWindow" MinHeight="450" MinWidth="825" Height="450" Width="825">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1.3*" />
+            <ColumnDefinition Width="1.5*" />
+        </Grid.ColumnDefinitions>
+
+        <ComboBox HorizontalAlignment="Left" 
+                  Margin="10,10,0,0" 
+                  Grid.Row="0" Grid.Column="0" 
+                  VerticalAlignment="Top" 
+                  Width="159"
+                  Text="Select a Contact"
+                  IsReadOnly="True"
+                  ItemsSource="{Binding Path=AllMembers}" 
+                  SelectedItem="{Binding Path=SelectedPerson}" 
+                  DisplayMemberPath="Name"/>
+        <TextBox HorizontalAlignment="Left" 
+                 Height="23" 
+                 Margin="0,10,0,0" 
+                 Grid.Row="0" Grid.Column="1"
+                 controls:TextBoxHelper.Watermark="Enter starting phrase..."
+                 TextWrapping="Wrap"
+                 Text="{Binding Path=InputText, UpdateSourceTrigger=PropertyChanged}" 
+                 VerticalAlignment="Top" 
+                 Width="170"/>
+        <CheckBox 
+            Content="Current Chat/Group Only" 
+            HorizontalAlignment="Left" 
+            Margin="0,13,0,0" 
+            Grid.Row="0" Grid.Column="2" 
+            VerticalAlignment="Top"
+            IsChecked="{Binding CurrentGroupChatOnly, Mode=TwoWay}"/>
+        
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,7,10,0" Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2">
+            <Label Content="Max Number of Words: " Width="156"></Label>
+            <controls:NumericUpDown Minimum="1" Maximum="200" Width="84" Value="{Binding MaxNumWords}"></controls:NumericUpDown>
+        </StackPanel>
+        
+        <TextBox HorizontalAlignment="Stretch" 
+                 MinHeight="60" 
+                 Margin="10,15,0,0" 
+                 Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"
+                 TextWrapping="Wrap"  
+                 Text="{Binding Path=OutputText}"
+                 VerticalAlignment="Stretch" 
+                 MinWidth="659"
+                 IsReadOnly="True"/>
+        <Button Content="Regenerate"
+                HorizontalAlignment="Right"
+                Margin="10,15,10,0"
+                Grid.Row="1" Grid.Column="4"
+                VerticalAlignment="Top"
+                Width="118"
+                Command="{Binding RegenerateOutput}" />
+        <Button Content="Copy"
+                HorizontalAlignment="Right"
+                Margin="10,50,10,0"
+                Grid.Row="1" Grid.Column="4"
+                VerticalAlignment="Top"
+                Width="118"
+                Command="{Binding CopyOutput}" />
+    </Grid>
+</Window>

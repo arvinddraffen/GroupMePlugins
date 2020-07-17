@@ -7,6 +7,14 @@
     <StartupObject />
   </PropertyGroup>
 
+  <Target Name="PackageForRelease" AfterTargets="Build" Condition=" '$(Configuration)' == 'Release'">
+    <Message Text="Packaging for Release...." Importance="High" />
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="myAssemblyInfo" />
+    </GetAssemblyIdentity>
+    <Exec Command="&quot;$(SolutionDir)\PackageForReleaseTools\PackageForRelease.exe&quot; --shortname $(ProjectName) --fullname &quot;Letter Swap&quot; --bindir &quot;$(OutDir)\&quot; --pubdir &quot;$(OutDir)\..\..\..\..\\Publish\\&quot; --version &quot;$([System.Version]::Parse(%(myAssemblyInfo.Version)).ToString(3))&quot;" />
+  </Target>
+
   <ItemGroup>
     <PackageReference Include="GroupMeClientPlugin" Version="2.0.1" />
   </ItemGroup>

@@ -8,9 +8,31 @@
     <PackageReference Include="GroupMeClientPlugin" Version="1.0.1" />
   </ItemGroup>
 
-  <Target Name="TestTarget" AfterTargets="Build">
-    <Message Text="Building Python Tool"/>
-    <Exec Command="py -m PyInstaller -F &quot;$(MSBuildProjectDirectory)\PhraseManipulation-plugin.py&quot; --distpath &quot;$(MSBuildProjectDirectory)\$(OutDir)\&quot;"
-          WorkingDirectory="$(IntermediateOutputPath)"/>
+<ItemGroup>
+    <PackageReference Include="GitInfo" Version="2.0.26">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="GMDCPluginPackager" Version="1.0.0" />
+    <PackageReference Include="GroupMeClientPlugin" Version="2.0.2" />
+  </ItemGroup>
+  <Target Name="_DetermineSetupGMDCPackagerVersion" Condition="'$(SetupGMDCPackagerVersion)' == ''">
+    <ItemGroup>
+      <Package-GMDCPluginPackager Include="@(PackageReference)" Condition=" '%(Identity)' == 'GMDCPluginPackager' " />
+    </ItemGroup>
+    <CreateProperty Value="%(Package-GMDCPluginPackager.Version)">
+      <Output TaskParameter="Value" PropertyName="SetupGMDCPackagerVersion" />
+    </CreateProperty>
+    <Message Text="Automatically detected GMDC Packaging Tools version: $(SetupGMDCPackagerVersion)" Importance="Normal" />
+  </Target>
+  <Target Name="PackageForRelease" AfterTargets="Build" Condition=" '$(Configuration)' == 'Release'" DependsOnTargets="_DetermineSetupGMDCPackagerVersion;">
+    <Message Text="Packaging for Release...." Importance="High" />
+    <PropertyGroup>
+      <_PackageForReleasePath>$(NuGetPackageRoot)GMDCPluginPackager\$(SetupGMDCPackagerVersion)\tools\net46\PackageForRelease.exe</_PackageForReleasePath>
+    </PropertyGroup>
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="myAssemblyInfo" />
+    </GetAssemblyIdentity>
+    <Exec Command="&quot;$(_PackageForReleasePath)&quot; --shortname $(ProjectName) --fullname &quot;Phrase Manipulation&quot; --bindir &quot;$(OutDir)\&quot; --pubdir &quot;$(OutDir)\..\\Publish\\&quot; --version &quot;$([System.Version]::Parse(%(myAssemblyInfo.Version)).ToString(3))&quot;" />
   </Target>
 </Project>

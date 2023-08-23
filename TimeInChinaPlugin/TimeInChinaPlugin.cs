@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using GroupMeClientPlugin.MessageCompose;
 
-namespace LetterSwapPlugin
+namespace TimeInChinaPlugin
 {
-    public class LetterSwapPlugin : GroupMeClientPlugin.PluginBase, IMessageComposePlugin
+    public class TimeInChinaPlugin : GroupMeClientPlugin.PluginBase, IMessageComposePlugin
     {
         public string EffectPluginName => this.PluginDisplayName;
 

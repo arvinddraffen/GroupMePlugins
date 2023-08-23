@@ -36,7 +36,7 @@
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="myAssemblyInfo" />
     </GetAssemblyIdentity>
-    <Exec Command="&quot;$(_PackageForReleasePath)&quot; --shortname $(ProjectName) --fullname &quot;Phrase Manipulation&quot; --bindir &quot;$(OutDir)\&quot; --pubdir &quot;$(OutDir)\..\\Publish\\&quot; --version &quot;$([System.Version]::Parse(%(myAssemblyInfo.Version)).ToString(3))&quot;" />
+    <Exec Command="&quot;$(_PackageForReleasePath)&quot; --shortname $(ProjectName) --fullname &quot;Phrase Manipulation&quot; --bindir &quot;$(OutDir)\&quot; --pubdir &quot;$(OutDir)\..\..\\Publish\\&quot; --version &quot;$([System.Version]::Parse(%(myAssemblyInfo.Version)).ToString(3))&quot;" />
   </Target>
 
   <ItemGroup>

@@ -95,34 +95,57 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="GroupMeClientPlugin">
-      <Version>2.0.1</Version>
-	  <ExcludeAssets>runtime</ExcludeAssets>
+      <Version>2.0.2</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="MahApps.Metro">
-      <Version>1.6.5</Version>
-	  <ExcludeAssets>runtime</ExcludeAssets>
+      <Version>2.4.9</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
       <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MvvmLightLibs">
-      <Version>5.4.1.1</Version>
-	  <ExcludeAssets>runtime</ExcludeAssets>
+    <PackageReference Include="Microsoft.Toolkit.Mvvm">
+      <Version>7.1.2</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
       <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.ComponentModel.Annotations">
       <Version>4.5.0</Version>
-	  <ExcludeAssets>runtime</ExcludeAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-  <Target Name="PackageForRelease" AfterTargets="Build" Condition=" '$(Configuration)' == 'Release'">
-  <Message Text="Packaging for Release...." Importance="High" />
+  <ItemGroup>
+    <PackageReference Include="GitInfo" Version="2.0.26">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="GMDCPluginPackager" Version="1.0.0" />
+    <PackageReference Include="GroupMeClientPlugin" Version="2.0.2" />
+  </ItemGroup>
+  
+  <Target Name="_DetermineSetupGMDCPackagerVersion" Condition="'$(SetupGMDCPackagerVersion)' == ''">
+    <ItemGroup>
+      <Package-GMDCPluginPackager Include="@(PackageReference)" Condition=" '%(Identity)' == 'GMDCPluginPackager' " />
+    </ItemGroup>
+    <CreateProperty Value="%(Package-GMDCPluginPackager.Version)">
+      <Output TaskParameter="Value" PropertyName="SetupGMDCPackagerVersion" />
+    </CreateProperty>
+    <Message Text="Automatically detected GMDC Packaging Tools version: $(SetupGMDCPackagerVersion)" Importance="Normal" />
+  </Target>
 
-  <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
-    <Output TaskParameter="Assemblies" ItemName="myAssemblyInfo" />
-  </GetAssemblyIdentity>
+  <Target Name="PackageForRelease" AfterTargets="Build" Condition=" '$(Configuration)' == 'Release'" DependsOnTargets="_DetermineSetupGMDCPackagerVersion;">
+    <Message Text="Packaging for Release...." Importance="High" />
+    <PropertyGroup>
+      <_PackageForReleasePath>$(NuGetPackageRoot)GMDCPluginPackager\$(SetupGMDCPackagerVersion)\tools\net46\PackageForRelease.exe</_PackageForReleasePath>
+    </PropertyGroup>
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="myAssemblyInfo" />
+    </GetAssemblyIdentity>
 
-  <Exec Command="&quot;$(SolutionDir)\PackageForReleaseTools\PackageForRelease.exe&quot; --shortname $(ProjectName) --fullname &quot;Markov Chain Generator&quot; --bindir &quot;$(OutDir)\&quot; --pubdir &quot;$(OutDir)\..\..\..\\Publish\\&quot; --version &quot;$([System.Version]::Parse(%(myAssemblyInfo.Version)).ToString(3))&quot;" />
-</Target>
+    <Exec Command="&quot;$(_PackageForReleasePath)&quot; --shortname $(ProjectName) --fullname &quot;Markov Chain Generator&quot; --bindir &quot;$(OutDir)\&quot; --pubdir &quot;$(OutDir)\..\\Publish\\&quot; --version &quot;$([System.Version]::Parse(%(myAssemblyInfo.Version)).ToString(3))&quot;" />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

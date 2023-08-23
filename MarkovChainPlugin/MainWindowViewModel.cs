@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight.Command;
-using GroupMeClientApi.Models;
+﻿using GroupMeClientApi.Models;
 using GroupMeClientPlugin;
 using GroupMeClientPlugin.GroupChat;
 using System;
@@ -8,10 +7,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace GroupPluginDemoWPF_MVVM
 {
-    class MainWindowViewModel : GalaSoft.MvvmLight.ViewModelBase
+    class MainWindowViewModel : ObservableObject
     {
         private string inputText;
         private string outputText;
@@ -36,8 +36,8 @@ namespace GroupPluginDemoWPF_MVVM
             this.outputText = "";
             this.phraseDictionary = new Dictionary<GlobalUser, Dictionary<string, List<string>>>();
             this.phraseDictionaryLocal = new Dictionary<GlobalUser, Dictionary<string, List<string>>>();
-            this.RegenerateOutput = new RelayCommand(this.RegenerateChain);
-            this.CopyOutput = new RelayCommand(this.CopyOutputChain);
+            this.RegenerateOutput = new Microsoft.Toolkit.Mvvm.Input.RelayCommand(this.RegenerateChain);
+            this.CopyOutput = new Microsoft.Toolkit.Mvvm.Input.RelayCommand(this.CopyOutputChain);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace GroupPluginDemoWPF_MVVM
         public bool CurrentGroupChatOnly
         {
             get => this.currentGroupChatOnly;
-            set => this.Set(() => this.CurrentGroupChatOnly, ref this.currentGroupChatOnly, value);
+            set => this.SetProperty(ref this.currentGroupChatOnly, value);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace GroupPluginDemoWPF_MVVM
 
             set
             {
-                this.Set(() => this.SelectedPerson, ref this.selectedPerson, value);
+                this.SetProperty(ref this.selectedPerson, value);
                 this.UpdatePhraseDictionary(value);
             }
         }
@@ -123,7 +123,7 @@ namespace GroupPluginDemoWPF_MVVM
 
             set
             {
-                this.Set(() => this.InputText, ref this.inputText, value);
+                this.SetProperty(ref this.inputText, value);
                 this.OutputText = this.MakeMarkovChain();
             }
         }
@@ -134,7 +134,7 @@ namespace GroupPluginDemoWPF_MVVM
         public string OutputText
         {
             get => this.outputText;
-            set => this.Set(() => this.OutputText, ref this.outputText, value);
+            set => this.SetProperty(ref this.outputText, value);
         }
 
         /// <summary>

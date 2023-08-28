@@ -335,7 +335,6 @@ namespace GroupMeStatsPlugin
                     new BarItem{ Value = userStatistics[selectedPerson].likesReceived},
                     new BarItem{ Value = userStatistics[selectedPerson].selfLikes},
                     new BarItem{ Value = userStatistics[selectedPerson].likesGiven},
-                    new BarItem{ Value = 20.0/*userStatistics[selectedPerson].totalLikes*/},
                     new BarItem{ Value = userStatistics[selectedPerson].percentMessagesLiked},
                     new BarItem{ Value = userStatistics[selectedPerson].imagesSent},
                     new BarItem{ Value = userStatistics[selectedPerson].wordsSent}
@@ -344,6 +343,11 @@ namespace GroupMeStatsPlugin
                 LabelFormatString = "{0}"
             };
 
+            if (selectedPerson.Id == "total")
+            {
+                barSeries.Items.Add(new BarItem { Value = userStatistics[selectedPerson].totalLikes });
+            }
+
             UserStatisticsModel.Series.Add(barSeries);
 
             CategoryAxis labelsAxis = new CategoryAxis{Position = AxisPosition.Left};
@@ -351,11 +355,13 @@ namespace GroupMeStatsPlugin
             labelsAxis.Labels.Add("Likes Received");
             labelsAxis.Labels.Add("Self Likes");
             labelsAxis.Labels.Add("Likes Given");
-            labelsAxis.Labels.Add("Total Likes");
             labelsAxis.Labels.Add("Percent Messages Liked");
             labelsAxis.Labels.Add("Images Sent");
             labelsAxis.Labels.Add("Words Sent");
             labelsAxis.Title = $"Statistics by Category for {this.SelectedPerson.Name}";
+
+            if (selectedPerson.Id == "total")
+                labelsAxis.Labels.Add("Total Likes");
 
             var valueAxis = new LinearAxis { Position = AxisPosition.Bottom, MinimumPadding = 0, MaximumPadding = 0.06, AbsoluteMinimum = 0};
             valueAxis.Title = "Number of Messages";

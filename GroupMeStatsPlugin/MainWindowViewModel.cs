@@ -322,33 +322,29 @@ namespace GroupMeStatsPlugin
         private void SetupGraphModels()
         {
             // setup general statistics
-            if (userStatisticsModel.Series.Count > 0)
-            {
-                userStatisticsModel.Series.Clear();
-            }
+            //if (userStatisticsModel.Series.Count > 0)
+            //{
+            //    userStatisticsModel.Series.Clear();
+            //}
 
-            var barSeries = new OxyPlot.Series.BarSeries
+            var barSeries = new BarSeries
             {
-                ItemsSource = new List<BarItem>(new[]
-                {
-                    new BarItem{ Value = userStatistics[selectedPerson].messagesSent},
-                    new BarItem{ Value = userStatistics[selectedPerson].likesReceived},
-                    new BarItem{ Value = userStatistics[selectedPerson].selfLikes},
-                    new BarItem{ Value = userStatistics[selectedPerson].likesGiven},
-                    new BarItem{ Value = userStatistics[selectedPerson].percentMessagesLiked},
-                    new BarItem{ Value = userStatistics[selectedPerson].imagesSent},
-                    new BarItem{ Value = userStatistics[selectedPerson].wordsSent}
-                }),
-                LabelPlacement = LabelPlacement.Outside,
+                LabelPlacement = LabelPlacement.Inside,
                 LabelFormatString = "{0}"
             };
+
+            barSeries.Items.Add(new BarItem { Value = userStatistics[selectedPerson].messagesSent });
+            barSeries.Items.Add(new BarItem { Value = userStatistics[selectedPerson].likesReceived });
+            barSeries.Items.Add(new BarItem { Value = userStatistics[selectedPerson].selfLikes });
+            barSeries.Items.Add(new BarItem { Value = userStatistics[selectedPerson].likesGiven });
+            barSeries.Items.Add(new BarItem { Value = userStatistics[selectedPerson].percentMessagesLiked });
+            barSeries.Items.Add(new BarItem { Value = userStatistics[selectedPerson].imagesSent });
+            barSeries.Items.Add(new BarItem { Value = userStatistics[selectedPerson].wordsSent });
 
             if (selectedPerson.Id == "total")
             {
                 barSeries.Items.Add(new BarItem { Value = userStatistics[selectedPerson].totalLikes });
             }
-
-            UserStatisticsModel.Series.Add(barSeries);
 
             CategoryAxis labelsAxis = new CategoryAxis{Position = AxisPosition.Left};
             labelsAxis.Labels.Add("Messages Sent");
@@ -358,15 +354,17 @@ namespace GroupMeStatsPlugin
             labelsAxis.Labels.Add("Percent Messages Liked");
             labelsAxis.Labels.Add("Images Sent");
             labelsAxis.Labels.Add("Words Sent");
-            labelsAxis.Title = $"Statistics by Category for {this.SelectedPerson.Name}";
+            //labelsAxis.Title = $"Statistics by Category for {this.SelectedPerson.Name}";
 
             if (selectedPerson.Id == "total")
                 labelsAxis.Labels.Add("Total Likes");
 
             var valueAxis = new LinearAxis { Position = AxisPosition.Bottom, MinimumPadding = 0, MaximumPadding = 0.06, AbsoluteMinimum = 0};
             valueAxis.Title = "Number of Messages";
+
+            UserStatisticsModel.Series.Add(barSeries);
             UserStatisticsModel.Axes.Add(labelsAxis);
-            UserStatisticsModel.Axes.Add(valueAxis);
+            //UserStatisticsModel.Axes.Add(valueAxis);
 
             //UserStatisticsModel.Axes.Add(new OxyPlot.Axes.CategoryAxis
             //{
@@ -393,6 +391,41 @@ namespace GroupMeStatsPlugin
             //    MaximumPadding = 0.06,
             //    AbsoluteMinimum = 0
             //});
+
+
+            var messageTimesBarSeries = new BarSeries
+            {
+                LabelPlacement = LabelPlacement.Inside,
+                LabelFormatString = "{0}"
+            };
+
+            CategoryAxis messageTimesLabelAxis = new CategoryAxis { Position = AxisPosition.Left };
+
+            Console.WriteLine(messageTimes[selectedPerson]);
+
+
+            for (int i = 23; i >= 0; i--)
+            {
+                string hour = TimeSpan.FromHours(i).ToString("hh");
+
+                // if there are no messages for a specific hour interval, manually specify 0
+                if (messageTimes[selectedPerson].ContainsKey(hour))
+                {
+                    messageTimesBarSeries.Items.Add(new BarItem { Value = messageTimes[selectedPerson][hour] });
+                }
+                else
+                {
+                    messageTimesBarSeries.Items.Add(new BarItem { Value = 0.0 });
+                }
+
+                messageTimesLabelAxis.Labels.Add(hour);
+            }
+
+            MessageTimesModel.Series.Add(messageTimesBarSeries);
+            MessageTimesModel.Axes.Add(messageTimesLabelAxis);
+
+            MessageTimesModel.InvalidatePlot(true);
+
         }
 
         private IMessageContainer GroupChat { get; }

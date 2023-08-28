@@ -41,5 +41,6 @@
             </oxy:Plot.Series>
         </oxy:Plot>-->
         <oxy:PlotView Model="{Binding UserStatisticsModel}" Grid.Row="1" Grid.Column="0"/>
+        <oxy:PlotView Model="{Binding MessageTimesModel}" Grid.Row="1" Grid.Column="1"/>
     </Grid>
 </Window>

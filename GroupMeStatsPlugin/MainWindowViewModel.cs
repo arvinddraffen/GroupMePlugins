@@ -15,6 +15,7 @@ using System.Web.UI.WebControls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
+using MahApps.Metro.Controls;
 
 namespace GroupMeStatsPlugin
 {
@@ -54,7 +55,7 @@ namespace GroupMeStatsPlugin
         private PlotModel popularWordsModel;
         private PlotModel messageTimesModel;
 
-        public ICommand RegenerateOutput { get; }
+        public ICommand CalculateStatisticsCommand { get; }
 
         public MainWindowViewModel(IMessageContainer groupChat, CacheSession cacheSession, IPluginUIIntegration uIIntegration)
         {
@@ -66,7 +67,7 @@ namespace GroupMeStatsPlugin
             this.messageTimesModel = new PlotModel();
 
             //this.RegenerateOutput = new RelayCommand(this.CalculateStatistics);
-            this.RegenerateOutput = new Microsoft.Toolkit.Mvvm.Input.RelayCommand(()
+            this.CalculateStatisticsCommand = new Microsoft.Toolkit.Mvvm.Input.RelayCommand(()
                =>
            {
                this.CalculateStatistics();
@@ -330,43 +331,58 @@ namespace GroupMeStatsPlugin
             {
                 ItemsSource = new List<BarItem>(new[]
                 {
-                    new BarItem{ Value = userStatistics[selectedPerson].messagesSent },
+                    new BarItem{ Value = userStatistics[selectedPerson].messagesSent},
                     new BarItem{ Value = userStatistics[selectedPerson].likesReceived},
                     new BarItem{ Value = userStatistics[selectedPerson].selfLikes},
                     new BarItem{ Value = userStatistics[selectedPerson].likesGiven},
-                    new BarItem{ Value = userStatistics[selectedPerson].totalLikes},
+                    new BarItem{ Value = 20.0/*userStatistics[selectedPerson].totalLikes*/},
                     new BarItem{ Value = userStatistics[selectedPerson].percentMessagesLiked},
                     new BarItem{ Value = userStatistics[selectedPerson].imagesSent},
                     new BarItem{ Value = userStatistics[selectedPerson].wordsSent}
                 }),
                 LabelPlacement = LabelPlacement.Base
             };
-            
+
             UserStatisticsModel.Series.Add(barSeries);
 
-            UserStatisticsModel.Axes.Add(new OxyPlot.Axes.CategoryAxis
-            {
-                Position = AxisPosition.Bottom,
-                Key = "GeneralStatsAxis",
-                ItemsSource = new[]
-                {
-                    "Messages Sent",
-                    "Likes Received",
-                    "Self Likes",
-                    "Likes Given",
-                    "Total Likes",
-                    "Percent Messages Liked",
-                    "Images Sent",
-                    "Words Sent"
-                }
-            });
-            UserStatisticsModel.Axes.Add(new OxyPlot.Axes.LinearAxis
-            {
-                Position = AxisPosition.Left,
-                MinimumPadding = 0,
-                MaximumPadding = 0.06,
-                AbsoluteMinimum = 0
-            });
+            CategoryAxis labelsAxis = new CategoryAxis{Position = AxisPosition.Left};
+            labelsAxis.Labels.Add("Messages Sent");
+            labelsAxis.Labels.Add("Likes Received");
+            labelsAxis.Labels.Add("Self Likes");
+            labelsAxis.Labels.Add("Likes Given");
+            labelsAxis.Labels.Add("Total Likes");
+            labelsAxis.Labels.Add("Percent Messages Liked");
+            labelsAxis.Labels.Add("Images Sent");
+            labelsAxis.Labels.Add("Words Sent");
+
+            var valueAxis = new LinearAxis { Position = AxisPosition.Bottom, MinimumPadding = 0, MaximumPadding = 0.06, AbsoluteMinimum = 0};
+            UserStatisticsModel.Axes.Add(labelsAxis);
+
+            //UserStatisticsModel.Axes.Add(new OxyPlot.Axes.CategoryAxis
+            //{
+            //    Position = AxisPosition.Left,
+            //    Key = "GeneralStatsAxis",
+            //    ItemsSource = new[]
+            //    {
+            //        "Messages Sent",
+            //        "Likes Received",
+            //        "Self Likes",
+            //        "Likes Given",
+            //        "Total Likes",
+            //        "Percent Messages Liked",
+            //        "Images Sent",
+            //        "Words Sent"
+            //    }
+            //});
+
+            UserStatisticsModel.InvalidatePlot(true);
+            //UserStatisticsModel.Axes.Add(new OxyPlot.Axes.LinearAxis
+            //{
+            //    Position = AxisPosition.Left,
+            //    MinimumPadding = 0,
+            //    MaximumPadding = 0.06,
+            //    AbsoluteMinimum = 0
+            //});
         }
 
         private IMessageContainer GroupChat { get; }

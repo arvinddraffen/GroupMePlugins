@@ -34,12 +34,12 @@
                 Grid.Row="0" Grid.Column="1"
                 VerticalAlignment="Top"
                 Width="118"
-                Command="{Binding RegenerateOutput}" />
+                Command="{Binding CalculateStatisticsCommand}" />
         <!--<oxy:Plot Title="General Statistics" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <oxy:Plot.Series>
                 <oxy:BarSeries ItemsSource="{Binding UserStatisticsModel}"/>
             </oxy:Plot.Series>
         </oxy:Plot>-->
-        <oxy:PlotView Model="{Binding UserStatisticsModel}" />
+        <oxy:PlotView Model="{Binding UserStatisticsModel}" Grid.Row="1" Grid.Column="0" Margin="0,0,0,-261"/>
     </Grid>
 </Window>

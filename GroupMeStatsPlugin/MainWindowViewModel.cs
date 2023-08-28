@@ -340,7 +340,8 @@ namespace GroupMeStatsPlugin
                     new BarItem{ Value = userStatistics[selectedPerson].imagesSent},
                     new BarItem{ Value = userStatistics[selectedPerson].wordsSent}
                 }),
-                LabelPlacement = LabelPlacement.Base
+                LabelPlacement = LabelPlacement.Outside,
+                LabelFormatString = "{0}"
             };
 
             UserStatisticsModel.Series.Add(barSeries);
@@ -354,9 +355,12 @@ namespace GroupMeStatsPlugin
             labelsAxis.Labels.Add("Percent Messages Liked");
             labelsAxis.Labels.Add("Images Sent");
             labelsAxis.Labels.Add("Words Sent");
+            labelsAxis.Title = $"Statistics by Category for {this.SelectedPerson.Name}";
 
             var valueAxis = new LinearAxis { Position = AxisPosition.Bottom, MinimumPadding = 0, MaximumPadding = 0.06, AbsoluteMinimum = 0};
+            valueAxis.Title = "Number of Messages";
             UserStatisticsModel.Axes.Add(labelsAxis);
+            UserStatisticsModel.Axes.Add(valueAxis);
 
             //UserStatisticsModel.Axes.Add(new OxyPlot.Axes.CategoryAxis
             //{

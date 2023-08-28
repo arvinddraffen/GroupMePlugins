@@ -40,6 +40,6 @@
                 <oxy:BarSeries ItemsSource="{Binding UserStatisticsModel}"/>
             </oxy:Plot.Series>
         </oxy:Plot>-->
-        <oxy:PlotView Model="{Binding UserStatisticsModel}" Grid.Row="1" Grid.Column="0" Margin="0,0,0,-261"/>
+        <oxy:PlotView Model="{Binding UserStatisticsModel}" Grid.Row="1" Grid.Column="0" Margin="0,0,0,-364"/>
     </Grid>
 </Window>

@@ -65,6 +65,7 @@ namespace GroupMeStatsPlugin
             this.userStatisticsModel = new PlotModel();
             this.popularWordsModel = new PlotModel();
             this.messageTimesModel = new PlotModel();
+            graphedUsers = new List<GlobalUser>();
 
             //this.RegenerateOutput = new RelayCommand(this.CalculateStatistics);
             this.CalculateStatisticsCommand = new Microsoft.Toolkit.Mvvm.Input.RelayCommand(()
@@ -166,6 +167,9 @@ namespace GroupMeStatsPlugin
 
         private void CalculateStatistics()
         {
+            // don't calculate statistics multiple times
+            if (this.graphedUsers.Count > 0) { return; }
+
             this.InitializeDictionary();
 
             var membersToAnalyze = this.AllMembers
@@ -321,6 +325,16 @@ namespace GroupMeStatsPlugin
 
         private void SetupGraphModels()
         {
+            // allows for graphing multiple users simultaneously, without repeating the same user
+            if (this.graphedUsers.Contains(selectedPerson))
+            {
+                return;
+            }
+            else
+            {
+                this.graphedUsers.Add(selectedPerson);
+            }
+
             // setup general statistics
             //if (userStatisticsModel.Series.Count > 0)
             //{
@@ -427,6 +441,8 @@ namespace GroupMeStatsPlugin
             MessageTimesModel.InvalidatePlot(true);
 
         }
+
+        private List<GlobalUser> graphedUsers;
 
         private IMessageContainer GroupChat { get; }
 

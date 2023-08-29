@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using MahApps.Metro.Controls;
+using OxyPlot.Legends;
 
 namespace GroupMeStatsPlugin
 {
@@ -344,7 +345,8 @@ namespace GroupMeStatsPlugin
             var barSeries = new BarSeries
             {
                 LabelPlacement = LabelPlacement.Inside,
-                LabelFormatString = "{0}"
+                LabelFormatString = "{0}",
+                Title = $"{selectedPerson.Name}"
             };
 
             barSeries.Items.Add(new BarItem { Value = userStatistics[selectedPerson].messagesSent });
@@ -376,8 +378,16 @@ namespace GroupMeStatsPlugin
             var valueAxis = new LinearAxis { Position = AxisPosition.Bottom, MinimumPadding = 0, MaximumPadding = 0.06, AbsoluteMinimum = 0};
             valueAxis.Title = "Number of Messages";
 
+            UserStatisticsModel.Legends.Add(new Legend
+            {
+                LegendTitle = "Legend",
+                LegendPosition = LegendPosition.TopRight,
+                LegendPlacement = LegendPlacement.Outside
+            });
+
             UserStatisticsModel.Series.Add(barSeries);
             UserStatisticsModel.Axes.Add(labelsAxis);
+            userStatisticsModel.Title = "Statistics by User";
             //UserStatisticsModel.Axes.Add(valueAxis);
 
             //UserStatisticsModel.Axes.Add(new OxyPlot.Axes.CategoryAxis
@@ -410,13 +420,11 @@ namespace GroupMeStatsPlugin
             var messageTimesBarSeries = new BarSeries
             {
                 LabelPlacement = LabelPlacement.Inside,
-                LabelFormatString = "{0}"
+                LabelFormatString = "{0}",
+                Title = $"{selectedPerson.Name}"
             };
 
             CategoryAxis messageTimesLabelAxis = new CategoryAxis { Position = AxisPosition.Left };
-
-            Console.WriteLine(messageTimes[selectedPerson]);
-
 
             for (int i = 23; i >= 0; i--)
             {
@@ -435,8 +443,16 @@ namespace GroupMeStatsPlugin
                 messageTimesLabelAxis.Labels.Add(hour);
             }
 
+            messageTimesModel.Legends.Add(new Legend
+            {
+                LegendTitle = "Messages Sent by Hour",
+                LegendPosition = LegendPosition.TopRight,
+                LegendPlacement = LegendPlacement.Outside
+            });
+
             MessageTimesModel.Series.Add(messageTimesBarSeries);
             MessageTimesModel.Axes.Add(messageTimesLabelAxis);
+            MessageTimesModel.Title = "Messages Sent by Hour";
 
             MessageTimesModel.InvalidatePlot(true);
 
